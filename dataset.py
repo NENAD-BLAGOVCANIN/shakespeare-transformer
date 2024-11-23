@@ -1,13 +1,15 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-class TextDataset(Dataset):
-    def __init__(self, input_ids, target_ids):
-        self.input_ids = input_ids
-        self.target_ids = target_ids
-    
+class ShakespeareDataset(Dataset):
+    def __init__(self, tokens, sequence_length):
+        self.tokens = tokens
+        self.sequence_length = sequence_length
+
     def __len__(self):
-        return len(self.input_ids)
-    
+        return len(self.tokens) - self.sequence_length
+
     def __getitem__(self, idx):
-        return torch.tensor(self.input_ids[idx]), torch.tensor(self.target_ids[idx])
+        input_ids = self.tokens[idx:idx+self.sequence_length]
+        target_ids = self.tokens[idx+1:idx+self.sequence_length+1]
+        return torch.tensor(input_ids, dtype=torch.long), torch.tensor(target_ids, dtype=torch.long)
